@@ -1,0 +1,66 @@
+{
+  "TutorialDungeon": {
+    "floors" : 5,
+    "floorTiles" : [
+      "Prefabs/Floor"
+    ],
+    "stairs" : [
+      "Prefabs/Stairs"
+    ],
+    "wallTiles" : [
+      "Prefabs/Wall"
+    ],
+    "cornerTLTiles" : [
+      "Prefabs/CornerTL"
+    ],
+    "cornerTRTiles" : [
+      "Prefabs/CornerTR"
+    ],
+    "cornerBRTiles" : [
+      "Prefabs/CornerBR"
+    ],
+    "cornerBLTiles" : [
+      "Prefabs/CornerBL"
+    ],
+    "dungeonFloors" : [
+      {
+        "items" : [
+          {
+            "name": "Life Stone",
+            "weight": 5
+          }
+        ],
+        "enemies": [
+          {
+            "name": "Agathion",
+            "weight": 5
+          }
+        ],
+        "algo": "ClassicDungeon"
+      },
+      {
+        "items" : [
+          {
+            "name": "Life Stone",
+            "weight": 5
+          },
+          {
+            "name": "Agi Stone",
+            "weight": 2
+          }
+        ],
+        "enemies": [
+          {
+            "name": "Agathion",
+            "weight": 5
+          },
+          {
+            "name": "Oni",
+            "weight": 1
+          }
+        ],
+        "algo": "ClassicDungeon"
+      }
+    ]
+  }
+}
