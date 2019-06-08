@@ -1,0 +1,34 @@
+{
+	"Matador":
+	{
+		"name": "Matador",
+		"max_hp": 50,
+		"max_mp": 50,
+		"str": 50,
+		"vit": 50
+	},
+	"Agathion":
+	{
+		"name": "Agathion",
+		"max_hp": 50,
+		"max_mp": 50,
+		"str": 50,
+		"vit": 50
+	},
+	"Pixie":
+	{
+		"name": "Pixie",
+		"max_hp": 50,
+		"max_mp": 50,
+		"str": 50,
+		"vit": 50
+	},
+	"Knocker":
+	{
+		"name": "Knocker",
+		"max_hp": 50,
+		"max_mp": 50,
+		"str": 50,
+		"vit": 50
+	}
+}

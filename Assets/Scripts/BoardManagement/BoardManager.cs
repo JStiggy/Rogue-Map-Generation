@@ -8,38 +8,31 @@ using Newtonsoft.Json;
 using static AStarSearch;
 
 public class BoardManager : MonoBehaviour {
-
+    public static BoardManager i;
     public static JObject dungeonData;
+    public static JObject monsterData;
     public string dungeonName = "TutorialDungeon";
+    public GameObject unit;
 
     private Transform boardHolder;
-    private Dungeons dungeonFloor;
+    public  Dungeons dungeonFloor;
 
     int currentFloor = 0;
 
+    public Queue<Unit> actionQueue;
+
     public void Start() {
-        using (StreamReader file = File.OpenText(Application.dataPath + "/Data/floorData.json"))
+        i = this;
+        using (StreamReader file = File.OpenText(Application.dataPath + "/StreamingAssets/Data/floorData.json"))
         using (JsonTextReader reader = new JsonTextReader(file)) {
             dungeonData = (JObject)JToken.ReadFrom(reader);
         }
+        using (StreamReader file = File.OpenText(Application.dataPath + "/StreamingAssets/Data/monsterData.json"))
+        using (JsonTextReader reader = new JsonTextReader(file)) {
+            monsterData = (JObject)JToken.ReadFrom(reader);
+        }
         SetupScene();
 
-    }
-
-    public void Update() {
-        if (Input.GetKeyDown(KeyCode.A)) {
-            Location end = dungeonFloor.AddLocation();
-            Location current = dungeonFloor.AddLocation();
-            AStarSearch ass = new AStarSearch(dungeonFloor.roomMap, current, end);
-            int axe = 0;
-            while (current.x != end.x || current.y != end.y) {
-                GameObject go = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-                go.transform.position = new Vector3(end.x, 0, end.y);
-                end = ass.cameFrom[end];
-                axe += 1;
-                if (axe >= 55) break;
-            }
-        }
     }
 
     public void BoardSetup() {
@@ -48,16 +41,14 @@ public class BoardManager : MonoBehaviour {
             Destroy(boardHolder.gameObject);
         }
 
-        if (dungeonData == null) print("yikes");
-
         while (true) {
             dungeonFloor = (Dungeons)Activator.CreateInstance(Type.GetType(dungeonData[dungeonName]["dungeonFloors"][currentFloor]["algo"].ToString()));
             dungeonFloor.data = new Layout(dungeonData[dungeonName]);
 
-            dungeonFloor.roomMap = new int[100, 100];
+            dungeonFloor.roomMap = new Location[100, 100];
             for (int i = 0; i < 100; ++i) {
                 for (int j = 0; j < 100; ++j) {
-                    dungeonFloor.roomMap[i, j] = 0;
+                    dungeonFloor.roomMap[i, j] = new Location(i, j, null, 0);
                 }
             }
 
@@ -79,11 +70,37 @@ public class BoardManager : MonoBehaviour {
         //Board is legal for play
         dungeonFloor.board = new GameObject("Board").transform;
 
+        actionQueue = new Queue<Unit>();
+
         dungeonFloor.BuildRooms();
 
         dungeonFloor.BuildPaths();
 
         dungeonFloor.BuildFloor();
+
+        dungeonFloor.PlacePlayer();
+
+        for(int i =0; i < 10; ++ i)
+            dungeonFloor.PlaceEnemy();
+    }
+
+    public JToken GetMonster() {
+        int val = Random.Range(0, 999);
+        int loc = 0;
+        while (val > int.Parse(dungeonData[dungeonName]["dungeonFloors"][currentFloor]["enemies"][loc]["weight"].ToString())) {
+            val -= int.Parse(dungeonData[dungeonName]["dungeonFloors"][currentFloor]["enemies"][loc]["weight"].ToString());
+            loc++;
+        }
+        print(dungeonData[dungeonName]["dungeonFloors"][currentFloor]["enemies"][loc]["name"].ToString());
+        return monsterData[dungeonData[dungeonName]["dungeonFloors"][currentFloor]["enemies"][loc]["name"].ToString()];
+    }
+
+    public void CloseMenu() {
+        actionQueue.Peek().GetComponent<PlayerController>().active = false;
+    }
+
+    public void PopQueue() {
+        actionQueue.Enqueue(actionQueue.Dequeue());
     }
 
     //SetupScene initializes our level and calls the previous functions to lay out the game board
@@ -91,5 +108,9 @@ public class BoardManager : MonoBehaviour {
         //Creates the outer walls and floor.
         currentFloor++;
         BoardSetup();
+    }
+
+    public bool IsLegalTile(int x, int y) {
+        return 2 == dungeonFloor.roomMap[x, y].tile && null == dungeonFloor.roomMap[x, y].unit;
     }
 }

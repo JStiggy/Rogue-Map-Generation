@@ -46,16 +46,16 @@ public class AStarSearch {
         List<Location> locs = new List<Location>();
         try {
             if (map[loc.x + 1, loc.y] == 2) {
-                locs.Add(new Location(loc.x + 1, loc.y));
+                locs.Add(BoardManager.i.dungeonFloor.roomMap[loc.x + 1, loc.y]);
             }
             if (map[loc.x - 1, loc.y] == 2) {
-                locs.Add(new Location(loc.x - 1, loc.y));
+                locs.Add(BoardManager.i.dungeonFloor.roomMap[loc.x - 1, loc.y]);
             }
             if (map[loc.x, loc.y + 1] == 2) {
-                locs.Add(new Location(loc.x, loc.y + 1));
+                locs.Add(BoardManager.i.dungeonFloor.roomMap[loc.x, loc.y + 1]);
             }
             if (map[loc.x, loc.y - 1] == 2) {
-                locs.Add(new Location(loc.x, loc.y - 1));
+                locs.Add(BoardManager.i.dungeonFloor.roomMap[loc.x, loc.y - 1]);
             }
         } catch (IndexOutOfRangeException e) { }
 
@@ -93,10 +93,16 @@ public class AStarSearch {
         // be slow. You'll probably want to override both Equals and
         // GetHashCode in a real project.
 
+        public int tile;
         public readonly int x, y;
-        public Location(int x, int y) {
+        public Unit unit;
+        //public Item item;
+        //public Interactable interactable;
+        public Location(int x, int y, Unit u, int t) {
             this.x = x;
             this.y = y;
+            this.unit = u;
+            this.tile = t;
         }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
 using static AStarSearch;
 
 public class ClassicDungeon : Dungeons
@@ -73,9 +76,9 @@ public class ClassicDungeon : Dungeons
                 for (int yPos = roomList[i].yPos; yPos <= roomList[i].yPos + roomList[i].height; ++yPos) {
                     if (xPos == roomList[i].xPos || xPos == roomList[i].xPos + roomList[i].width ||
                         yPos == roomList[i].yPos || yPos == roomList[i].yPos + roomList[i].height) {
-                        roomMap[xPos, yPos] = 1;
+                        roomMap[xPos, yPos].tile = 1;
                     } else {
-                        roomMap[xPos, yPos] = 2;
+                        roomMap[xPos, yPos].tile = 2;
                     }
                 }
             }
@@ -94,14 +97,14 @@ public class ClassicDungeon : Dungeons
                 int yPos = yStart;
 
                 while (xPos != xDest) {
-                    roomMap[xPos, yPos] = 2;
+                    roomMap[xPos, yPos].tile = 2;
 
-                    if (roomMap[xPos, yPos - 1] == 0) {
-                        roomMap[xPos, yPos - 1] = 1;
+                    if (roomMap[xPos, yPos - 1].tile == 0) {
+                        roomMap[xPos, yPos - 1].tile = 1;
                     }
 
-                    if (roomMap[xPos, yPos + 1] == 0) {
-                        roomMap[xPos, yPos + 1] = 1;
+                    if (roomMap[xPos, yPos + 1].tile == 0) {
+                        roomMap[xPos, yPos + 1].tile = 1;
                     }
 
                     if (xPos < xDest) {
@@ -113,19 +116,19 @@ public class ClassicDungeon : Dungeons
                 }
                 for (int t1 = -1; t1 < 2; ++t1) {
                     for (int t2 = -1; t2 < 2; ++t2) {
-                        if (roomMap[xPos + t1, yPos + t2] == 0) {
-                            roomMap[xPos + t1, yPos + t2] = 1;
+                        if (roomMap[xPos + t1, yPos + t2].tile == 0) {
+                            roomMap[xPos + t1, yPos + t2].tile = 1;
                         }
                     }
                 }
 
                 while (yPos != yDest) {
-                    roomMap[xPos, yPos] = 2;
-                    if (roomMap[xPos - 1, yPos] == 0) {
-                        roomMap[xPos - 1, yPos] = 1;
+                    roomMap[xPos, yPos].tile = 2;
+                    if (roomMap[xPos - 1, yPos].tile == 0) {
+                        roomMap[xPos - 1, yPos].tile = 1;
                     }
-                    if (roomMap[xPos + 1, yPos] == 0) {
-                        roomMap[xPos + 1, yPos] = 1;
+                    if (roomMap[xPos + 1, yPos].tile == 0) {
+                        roomMap[xPos + 1, yPos].tile = 1;
                     }
                     if (yPos < yDest) {
                         ++yPos;
@@ -141,7 +144,7 @@ public class ClassicDungeon : Dungeons
     public override void BuildFloor() {
         for (int i = 0; i < 80; ++i) {
             for (int j = 0; j < 80; ++j) {
-                int tVal = roomMap[i, j];
+                int tVal = roomMap[i, j].tile;
                 if (tVal == 0) {
                     continue;
                 } else if (tVal == 2) {
@@ -157,7 +160,40 @@ public class ClassicDungeon : Dungeons
 
     public override Location AddLocation() {
         RectangleRoom rr = roomList[Random.Range(0, roomList.Count - 1)];
-        return new Location( rr.xPos + Random.Range(0, rr.width) , rr.yPos + Random.Range(0, rr.height));
+        return roomMap[rr.xPos + Random.Range(1, rr.width-1), rr.yPos + Random.Range(1, rr.height-1)];
+    }
+
+    public override void PlacePlayer() {
+        Location loc = AddLocation();
+        GameObject go = GameObject.Instantiate(BoardManager.i.unit, new Vector3(loc.x, 0, loc.y), Quaternion.identity);
+        go.AddComponent<PlayerController>();
+        BoardManager.i.actionQueue.Enqueue(go.GetComponent<Unit>());
+        go.GetComponent<Unit>().x = loc.x;
+        go.GetComponent<Unit>().y = loc.y;
+        roomMap[loc.x, loc.y].unit = go.GetComponent<Unit>();
+        roomMap[loc.x, loc.y].unit.name = "Jack Frost";
+    }
+
+    public override void PlaceEnemy() {
+        JToken monsterData = BoardManager.i.GetMonster();
+        Location loc = AddLocation();
+        GameObject go = GameObject.Instantiate(BoardManager.i.unit, new Vector3(loc.x, 0, loc.y), Quaternion.identity);
+        go.AddComponent<EnemyController>();
+        BoardManager.i.actionQueue.Enqueue(go.GetComponent<Unit>());
+        go.GetComponent<Unit>().x = loc.x;
+        go.GetComponent<Unit>().y = loc.y;
+        roomMap[loc.x, loc.y].unit = go.GetComponent<Unit>();
+        roomMap[loc.x, loc.y].unit.name = monsterData["name"].ToString();
+        roomMap[loc.x, loc.y].unit.MAX_HP = int.Parse(monsterData["max_hp"].ToString());
+        roomMap[loc.x, loc.y].unit.MAX_MP = int.Parse(monsterData["max_mp"].ToString());
+        roomMap[loc.x, loc.y].unit.HP = roomMap[loc.x, loc.y].unit.MAX_HP;
+        roomMap[loc.x, loc.y].unit.MP = roomMap[loc.x, loc.y].unit.MAX_HP;
+        roomMap[loc.x, loc.y].unit.STR = int.Parse(monsterData["str"].ToString());
+        roomMap[loc.x, loc.y].unit.VIT = int.Parse(monsterData["vit"].ToString());
+    }
+
+    public override void PlaceItem() {
+
     }
 
     [System.Serializable]

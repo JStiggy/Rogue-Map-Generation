@@ -9,7 +9,7 @@ public abstract class Dungeons {
     public Layout data;
     public Dictionary<int, List<int>> roomAdjacencyList;
 
-    public int[,] roomMap;
+    public Location[,] roomMap;
 
     public abstract void GenerateRooms();
 
@@ -22,6 +22,12 @@ public abstract class Dungeons {
     public abstract void BuildPaths();
 
     public abstract void BuildFloor();
+
+    public abstract void PlacePlayer();
+
+    public abstract void PlaceItem();
+
+    public abstract void PlaceEnemy();
 
     public abstract Location AddLocation();
 

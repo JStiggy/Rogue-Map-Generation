@@ -1,6 +1,6 @@
 {
   "TutorialDungeon": {
-    "floors" : 5,
+    "floors" : 2,
     "floorTiles" : [
       "Prefabs/Floor"
     ],
@@ -33,7 +33,15 @@
         "enemies": [
           {
             "name": "Agathion",
-            "weight": 5
+            "weight": 333
+          },
+          {
+            "name": "Pixie",
+            "weight": 333
+          },
+          {
+            "name": "Knocker",
+            "weight": 334
           }
         ],
         "algo": "ClassicDungeon"
@@ -52,11 +60,19 @@
         "enemies": [
           {
             "name": "Agathion",
-            "weight": 5
+            "weight": 333
           },
           {
-            "name": "Oni",
-            "weight": 1
+            "name": "Pixie",
+            "weight": 333
+          },
+          {
+            "name": "Knocker",
+            "weight": 324
+          },
+          {
+            "name": "Matador",
+            "weight": 10
           }
         ],
         "algo": "ClassicDungeon"
