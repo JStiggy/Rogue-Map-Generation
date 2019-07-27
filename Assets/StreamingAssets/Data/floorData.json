@@ -2,25 +2,25 @@
   "TutorialDungeon": {
     "floors" : 2,
     "floorTiles" : [
-      "Prefabs/Floor"
+      "Prefabs/Map/Floor"
     ],
     "stairs" : [
-      "Prefabs/Stairs"
+      "Prefabs/Map/Stairs"
     ],
     "wallTiles" : [
-      "Prefabs/Wall"
+      "Prefabs/Map/Wall"
     ],
     "cornerTLTiles" : [
-      "Prefabs/CornerTL"
+      "Prefabs/Map/CornerTL"
     ],
     "cornerTRTiles" : [
-      "Prefabs/CornerTR"
+      "Prefabs/Map/CornerTR"
     ],
     "cornerBRTiles" : [
-      "Prefabs/CornerBR"
+      "Prefabs/Map/CornerBR"
     ],
     "cornerBLTiles" : [
-      "Prefabs/CornerBL"
+      "Prefabs/Map/CornerBL"
     ],
     "dungeonFloors" : [
       {

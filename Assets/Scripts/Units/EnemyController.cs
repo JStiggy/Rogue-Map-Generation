@@ -14,7 +14,7 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update() {
         if (BoardManager.i.actionQueue.Peek() == unit) {
-           
+            BoardManager.i.PopQueue();
         }
     }
 

@@ -100,6 +100,7 @@ public class BoardManager : MonoBehaviour {
     }
 
     public void PopQueue() {
+        print("End Turn");
         actionQueue.Enqueue(actionQueue.Dequeue());
     }
 

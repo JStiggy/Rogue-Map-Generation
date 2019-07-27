@@ -9,6 +9,9 @@ public class PlayerController : MonoBehaviour
 {
 
     Unit unit;
+    AnimationHandler animHandler;
+    Vector3 facingDirection = Vector3.forward;
+
     public bool active = false;
     private GameObject statusPanel;
     // Start is called before the first frame update
@@ -16,6 +19,7 @@ public class PlayerController : MonoBehaviour
     {
         unit = gameObject.GetComponent<Unit>();
         statusPanel = GameObject.Find("PlayerData");
+        animHandler = gameObject.GetComponent<AnimationHandler>();
     }
 
     // Update is called once per frame
@@ -33,6 +37,13 @@ public class PlayerController : MonoBehaviour
             }
             if(ControllerManager.inputs["Menu"].downLastFrame == 1 && !active) {
                 OpenMenu();
+                return;
+            }
+            if (ControllerManager.inputs["Submit"].downLastFrame == 1 && !active) {
+                active = true;
+                AStarSearch.Location[] locs = new AStarSearch.Location[1];
+                locs[0] = BoardManager.i.dungeonFloor.roomMap[(int)(unit.x + facingDirection.x), (int)(unit.y + facingDirection.y)];
+                animHandler.PerformAttack(0,"Attack",locs);
                 return;
             }
         }
@@ -57,6 +68,7 @@ public class PlayerController : MonoBehaviour
             BoardManager.i.dungeonFloor.roomMap[unit.x, unit.y].unit = null;
             unit.x += x; unit.y += y;
             Vector3 dest = new Vector3(unit.x, 0, unit.y);
+            facingDirection = dest - start;
             BoardManager.i.dungeonFloor.roomMap[unit.x, unit.y].unit = unit;
             float t = 0;
             do {
@@ -65,7 +77,10 @@ public class PlayerController : MonoBehaviour
                 yield return null;
             } while (t <= .5f);
             transform.position = dest;
+            active = false;
+            BoardManager.i.PopQueue();
         }
         active = false;
+
     }
 }
